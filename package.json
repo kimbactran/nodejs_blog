@@ -2,9 +2,9 @@
   "name": "blog",
   "version": "1.0.0",
   "description": "A blog website with F8",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "nodemon --inspect src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,9 +23,11 @@
   },
   "homepage": "https://github.com/kimbactran/nodejs_blog#readme",
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "express-handlebars": "^7.1.2",
     "nodemon": "^3.1.0"
   }
 }
