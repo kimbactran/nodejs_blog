@@ -34,7 +34,9 @@
   },
   "dependencies": {
     "express": "^4.19.2",
+    "method-override": "^3.0.0",
     "mongoose": "^8.3.1",
+    "mongoose-slug-updater": "^3.3.0",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
