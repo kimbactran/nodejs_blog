@@ -10,10 +10,10 @@ const route = require('./routes/index.routes');
 const db = require('./config/db');
 
 // Connect to DB
+app.use(methodOverride('_method'));
 db.connect();
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(methodOverride('_method'));
 app.use(
     express.urlencoded({
         extended: true,
