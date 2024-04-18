@@ -5,11 +5,14 @@ const { multiplesMongooseToObject, mongooseToObject } = require('../../utils//mo
 class MeController {
     // [GET] /me/stored/courses
     storedCourses(req, res, next) {
-        Course.find({})
-        .then(courses => res.render('me/stored-courses', {
-            courses: multiplesMongooseToObject(courses  )
-        }))
-        .catch(next);
+        // Promise
+        Promise.all([Course.countDocumentsWithDeleted({deleted: true}),  Course.find({})])
+        .then(([deletedCount, courses]) => res.render('me/stored-courses', {
+            deletedCount,
+            courses: multiplesMongooseToObject(courses),
+        } )).catch(next);
+
+        
     }
 
     trashCourses(req, res, next){

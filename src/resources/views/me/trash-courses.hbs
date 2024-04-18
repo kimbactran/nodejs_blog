@@ -1,12 +1,35 @@
 
-<div class="container" >
+<form name="container-form" class="mt-4" method="POST" action="/courses/handle-form-actions">
   <div class="">
     <h1>Courses deleted</h1>
     <a href="/me/stored/courses">List Courses</a>
+    <div class="mt-4 d-flex align-items-center">
+      <div class="form-check">
+  <input class="form-check-input" type="checkbox" value="" id="checkbox-all">
+  <label class="form-check-label" for="checkbox-all">
+   Select all
+  </label>
+  </div>
+
+    <select class="form-select" aria-label="Default select example" name="action">
+  <option value = ""selected>--  Select action --</option>
+  <option value="restore">Restore</option>
+  <option value="forceDelete">Permanently deleted</option>
+</select>
+
+    <button class="btn btn-primary btn-small btn-check-all-submit" disabled>
+      Done
+    </button>
+
+
+    
+    </div>
   </div>
     <table class="table mt-4">
   <thead>
     <tr>
+      <th scope="col"></th>
+
       <th scope="col">#</th>
       <th scope="col">Course name</th>
       <th scope="col">Description</th>
@@ -18,6 +41,10 @@
   <tbody>
     {{#each courses}}
     <tr>
+      <th><div class="form-check">
+  <input class="form-check-input" type="checkbox" value="{{this._id}}" name="courseIds[]">
+  
+  </div></th>
       <th scope="row">{{sum @index 1}}</th>
       <td>{{this.name}}</td>
       <td>{{this.description}}</td>
@@ -35,7 +62,7 @@
     {{/each}}
   </tbody>
 </table>
-</div>
+</form>
 
 
 {{!-- Confirm delete course --}} 
@@ -60,7 +87,12 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () { 
     var courseId; 
-    var restoreBtn = document.querySelector('.btn-restore')
+    var restoreBtn = document.querySelector('.btn-restore');
+        var containerForm = document.forms['container-form'];
+ var checkboxAll = document.getElementById('checkbox-all');
+    var courseItemCheckBox = document.getElementsByName('courseIds[]');
+    var numOfCheckedBox = 0;
+    var btnCheckAllSubmit = document.querySelector('.btn-check-all-submit');
     var deleteForm = document.forms['delete-course-form']; 
     var restoreForm = document.forms['restore-course-form']; 
     var btnDeleteCourse = document.getElementById('btn-delete-course');
@@ -85,6 +117,60 @@
         deleteForm.action = '/courses/' + courseId + '/force?_method=DELETE';
         deleteForm.submit();
     }
+    
+    // Selected checkbox onclick
+    checkboxAll.onchange = function (){
+      var isCheckedAll = this.checked;
+      
+        for(var checkbox of courseItemCheckBox){
+          checkbox.checked = isCheckedAll;
+          isCheckedAll? numOfCheckedBox = courseItemCheckBox.length : numOfCheckedBox=0;
+        renderCheckAllSubmitBtn(numOfCheckedBox) 
+
+      }
+    };
+
+    // Selected one item checkbox
+    for(var checkbox of courseItemCheckBox){
+
+    checkbox.onchange = function (){
+      var isCheckedAll = this.checked;
+      isCheckedAll? numOfCheckedBox++ : numOfCheckedBox--;
+      isCheckedAll = numOfCheckedBox === courseItemCheckBox.length;
+      checkboxAll.checked = isCheckedAll;
+      renderCheckAllSubmitBtn(numOfCheckedBox)
+    }
+    }
+
+    // Function to add or remove disabled
+    function renderCheckAllSubmitBtn(numOfCheckedBox){
+        numOfCheckedBox > 0 ? btnCheckAllSubmit.removeAttribute('disabled') : btnCheckAllSubmit.setAttribute('disabled', false);
+
+    }
+
+    // Check all checkbox button clicked
+    btnCheckAllSubmit.onclick = function(){
+
+    }
+
+    btnCheckAllSubmit.submit = function(e){
+      var isSubmittable = !this.hasAttribute('disabled');
+      if(!isSubmittable) {
+        e.preventDefault();
+      }
+    }
+
+    containerForm.addEventListener('submit', function(e) {
+    var selectedAction = this.querySelector('select[name="action"]').value;
+
+    // Check if the "Select action" option is still selected
+    if (selectedAction === "") {
+      // Prevent form submission if the action is not selected
+      e.preventDefault();
+      //alert('Please select an action before submitting the form.');
+      this.querySelector('select[name="action"]').focus();
+    }
+  });
 });
  
 </script>
